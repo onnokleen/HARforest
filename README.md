@@ -1,7 +1,3 @@
----
-output: github_document
----
-
 # HARforest
 
 <!-- badges: start -->
@@ -9,11 +5,11 @@ output: github_document
 [![CRAN status](https://www.r-pkg.org/badges/version/HARforest)](https://CRAN.R-project.org/package=HARforest)
 <!-- badges: end -->
 
-The goal of HARforest is to ...
+The goal of HARforest is to enable practitioners and researchers alike to employ the HAR forest developed by Onno Kleen and Anastasija Tetereva in <doi:10.2139/ssrn.4161957>.
 
 ## Installation
 
-You can install the development version of HARforest like so:
+You can install the development version of HARforest like this:
 
 ``` r
 library(devtools)
