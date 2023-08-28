@@ -5,7 +5,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/HARforest)](https://CRAN.R-project.org/package=HARforest)
 <!-- badges: end -->
 
-The goal of HARforest is to enable practitioners and researchers alike to employ the HAR forest developed by Onno Kleen and Anastasija Tetereva in <doi:10.2139/ssrn.4161957>.
+The goal of HARforest is to enable practitioners and researchers alike to employ the HAR forest developed by Onno Kleen and Anastasija Tetereva (2022, [doi:10.2139/ssrn.4161957](https://10.2139/ssrn.4161957)).
 
 ## Installation
 
