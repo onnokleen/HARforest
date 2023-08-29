@@ -161,7 +161,7 @@ estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, da
   df_predictions$forecast <- predictions + df_predictions$mean_rv
 
   # return everything
-  return(list(tree = tree_info, split_vars = split.vars, predictions = predictions, formula = formula))
+  return(list(tree = tree_info, split_vars = split.vars, predictions = df_predictions, formula = formula))
 }
 
 # formula, split.vars, minsize, mtry = 1/3, data.predict

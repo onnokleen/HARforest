@@ -20,28 +20,62 @@ We are working on making the code available on CRAN soon.
 
 ## Example
 
-This is a basic example which shows you how to estimate a HAR forest and to predict with it:
+This is a basic example which shows you how to estimate a HAR tree, how to grow a forest, and how to predict with it:
 
 ```{r example}
 library(HARforest)
+library(foreach)
+library(dplyr)
+
+split_vars <- c("rv_lag_1", "rv_lag_5", "rv_lag_22", "vix_lag")
+
 df_estimation <-
   rv_panel_data %>%
-  filter(date <= "2004-11-01") %>% # the data is already preaggregated
-  group_by(permno) %>%             # necessary to limit until November
-  mutate(mean_rv = mean(rv_lag_1)) # to avoid look-ahead bias
+  filter(date <= "2004-11-01") %>%     # the data is already preaggregated
+  group_by(permno) %>%                 # necessary to limit until November
+  mutate(mean_rv = mean(rv_lag_1)) %>% # to avoid look-ahead bias
+  mutate(across(c(rv_lead_22, rv_lag_1, rv_lag_5, rv_lag_22), ~ . - mean_rv)) 
 
 df_evaluation <-
   rv_panel_data %>%
   filter(date >= "2005-01-01") %>%
-  left_join(select(df_estimation, permno, mean_rv) %>% distinct())
+  left_join(select(df_estimation, permno, mean_rv) %>% distinct()) %>%
+  mutate(across(c(rv_lead_22, rv_lag_1, rv_lag_5, rv_lag_22), ~ . - mean_rv)) 
 
+# single HAR tree
 estimate_har_tree(
   df_estimation ,
   formula = rv_lead_22 ~ 0 + rv_lag_1 + rv_lag_5 + rv_lag_22,
-  split.vars = c("rv_lag_1", "rv_lag_5", "rv_lag_22", "vix_lag"),
+  split.vars = split_vars,
   minsize = 100,
   mtry = 1/3, # (default)
   data.predict = df_evaluation
 )
+
+# grow multiple trees to form a forest
+
+n_trees <- 10
+
+tree_list <- foreach (ii = 1:n_trees) %do% {
+  tree <- estimate_har_tree(df_estimation,
+                            formula = rv_lead_22 ~ 0 + rv_lag_1 + rv_lag_5 + rv_lag_22 ,
+                            split.vars = split_vars,
+                            minsize = 100,
+                            data.predict = df_evaluation)
+  environment(tree$formula) <- NULL
+  tree
+}
+
+# aggregate predictions of trees
+tree_predictions <-
+  tree_list %>%
+  lapply(., function(x) x$predictions$forecast) %>%
+  do.call(cbind, .) %>%
+  rowMeans()
+
+# align them with evaluation sample
+df_evaluation %>%
+  mutate(har_forest = tree_predictions)
+  
 ```
 
