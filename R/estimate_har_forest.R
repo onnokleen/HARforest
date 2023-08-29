@@ -147,7 +147,8 @@ estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, da
     for (i in seq_len(nrow(leafs))) {
       ind_prediction <- attr(subset(data.predict, eval(parse(text = leafs[i, "FILTER"]))), "row.names")
       if (length(ind_prediction) > 0) {
-        prediction_leaf <- unlist(leafs[i, c("beta1", "beta2", "beta3")]) %*% t(cbind(as.matrix(data.predict[ind_prediction, c("rv_lag_1", "rv_lag_5", "rv_lag_22")])))
+        prediction_leaf <- unlist(leafs[i, c("beta1", "beta2", "beta3")]) %*%
+          t(cbind(as.matrix(data.predict[ind_prediction, c("rv_lag_1", "rv_lag_5", "rv_lag_22")])))
         predictions[ind_prediction] <- t(prediction_leaf)
       }
     }

@@ -29,6 +29,8 @@ library(dplyr)
 
 split_vars <- c("rv_lag_1", "rv_lag_5", "rv_lag_22", "vix_lag")
 
+# Currently, the data still has to be structed and named as in our sample data "rv_panel_data"
+# We will update the package to be more flexible before releasing it on CRAN
 df_estimation <-
   rv_panel_data %>%
   filter(date <= "2004-11-01") %>%     # the data is already preaggregated
@@ -42,7 +44,7 @@ df_evaluation <-
   left_join(select(df_estimation, permno, mean_rv) %>% distinct()) %>%
   mutate(across(c(rv_lead_22, rv_lag_1, rv_lag_5, rv_lag_22), ~ . - mean_rv)) 
 
-# single HAR tree
+# Estimate single HAR tree
 estimate_har_tree(
   df_estimation ,
   formula = rv_lead_22 ~ 0 + rv_lag_1 + rv_lag_5 + rv_lag_22,
@@ -52,7 +54,8 @@ estimate_har_tree(
   data.predict = df_evaluation
 )
 
-# grow multiple trees to form a forest
+# Grow multiple trees to form a forest
+# Parallelization can be done with doParallel package and using %dopar% instead of %do%
 
 n_trees <- 10
 
@@ -66,14 +69,14 @@ tree_list <- foreach (ii = 1:n_trees) %do% {
   tree
 }
 
-# aggregate predictions of trees
+# Aggregate predictions of trees
 tree_predictions <-
   tree_list %>%
   lapply(., function(x) x$predictions$forecast) %>%
   do.call(cbind, .) %>%
   rowMeans()
 
-# align them with evaluation sample
+# Align them with evaluation sample
 df_evaluation %>%
   mutate(har_forest = tree_predictions)
   
