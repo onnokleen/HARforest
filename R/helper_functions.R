@@ -1,5 +1,12 @@
-# This is the splitting criterion we minimize (SSE [Sum Of Squared Errors]):
-# $SSE = \sum_{i \in S_1} (y_i - \bar(y)1)^2 + \sum_{i \in S_2} (y_i - \bar(y)2)^2$
+#' This is the splitting criterion we minimize (i.e., sum of squares)
+#'
+#' @importFrom stats .lm.fit
+#' @importFrom stats lm
+#' @importFrom stats model.frame
+#' @importFrom stats predict.lm
+#' @importFrom stats quantile
+#'
+#' @keywords internal
 splitting_criterion_honest <- function(split.var, data.fit, data.honest, formula) {
 
 

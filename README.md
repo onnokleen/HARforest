@@ -16,12 +16,32 @@ library(devtools)
 install_github("onnokleen/HARforest")
 ```
 
+We are working on making the code available on CRAN soon.
+
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to estimate a HAR forest and to predict with it:
 
 ```{r example}
 library(HARforest)
-## basic example code
+df_estimation <-
+  rv_panel_data %>%
+  filter(date <= "2004-11-01") %>% # the data is already preaggregated
+  group_by(permno) %>%             # necessary to limit until November
+  mutate(mean_rv = mean(rv_lag_1)) # to avoid look-ahead bias
+
+df_evaluation <-
+  rv_panel_data %>%
+  filter(date >= "2005-01-01") %>%
+  left_join(select(df_estimation, permno, mean_rv) %>% distinct())
+
+estimate_har_tree(
+  df_estimation ,
+  formula = rv_lead_22 ~ 0 + rv_lag_1 + rv_lag_5 + rv_lag_22,
+  split.vars = c("rv_lag_1", "rv_lag_5", "rv_lag_22", "vix_lag"),
+  minsize = 100,
+  mtry = 1/3, # (default)
+  data.predict = df_evaluation
+)
 ```
 
