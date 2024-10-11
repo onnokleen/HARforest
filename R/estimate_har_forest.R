@@ -3,7 +3,7 @@
 #' @importFrom foreach foreach
 #' @importFrom foreach '%do%'
 
-
+#' @export
 estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, data.predict) {
 
   mtry <- round(length(split.vars) * mtry) # convert to number of subsampled variables
