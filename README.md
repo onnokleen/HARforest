@@ -16,8 +16,6 @@ library(devtools)
 install_github("onnokleen/HARforest")
 ```
 
-We are working on making the code available on CRAN soon.
-
 ## Example
 
 This is a basic example which shows you how to estimate a HAR tree, how to grow a forest, and how to predict with it:
@@ -29,8 +27,8 @@ library(dplyr)
 
 split_vars <- c("rv_lag_1", "rv_lag_5", "rv_lag_22", "vix_lag")
 
-# Currently, the data still has to be structed and named as in our sample data "rv_panel_data"
-# We will update the package to be more flexible before releasing it on CRAN
+# Currently, the data has to be structed and named as in our sample data "rv_panel_data"
+# which is part of our package.
 df_estimation <-
   rv_panel_data %>%
   filter(date <= "2004-11-01") %>%     # the data is already preaggregated
