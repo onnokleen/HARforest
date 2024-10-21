@@ -7,7 +7,7 @@
 #' @importFrom stats quantile
 #'
 #' @keywords internal
-splitting_criterion_honest <- function(split.var, data.fit, data.honest, formula) {
+splitting_criterion_honest_package <- function(split.var, data.fit, data.honest, formula) {
 
 
   model_frame<- model.frame(formula, data.fit) # for faster .lm.fit

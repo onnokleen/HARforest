@@ -14,9 +14,17 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports:
     purrr,
-    foreach
+    foreach,
+    Rcpp,
+    stats,
+    data.table,
+    dplyr,
+    magrittr
 URL: https://github.com/onnokleen/HARforest/
 BugReports: https://github.com/onnokleen/HARforest/issues
 Depends: 
     R (>= 2.10)
 LazyData: true
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo

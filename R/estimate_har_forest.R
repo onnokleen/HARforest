@@ -4,9 +4,9 @@
 #' @importFrom foreach '%do%'
 
 #' @export
-estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, data.predict) {
+estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 2, data.predict) {
 
-  mtry <- round(length(split.vars) * mtry) # convert to number of subsampled variables
+  # mtry <- round(length(split.vars) * mtry) # convert to number of subsampled variables
 
   # coerce to data.frame
   data <- as.data.frame(data)
@@ -50,7 +50,7 @@ estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, da
 
       kk <- NULL
       splitting <- foreach (kk = sample_split_vars) %do% {
-        splitting_criterion_honest(kk,
+        splitting_criterion_honest_package(kk,
                                    data.fit = this_data_fit,
                                    data.honest = this_data_honest,
                                    formula = formula)

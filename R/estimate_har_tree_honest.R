@@ -1,153 +1,72 @@
 
-# Define the Rcpp function
-# Load the Rcpp and RcppArmadillo libraries
-library(Rcpp)
-library(RcppArmadillo)
+#' @keywords internal
+# # This is the splitting criterion we minimize (SSE [Sum Of Squared Errors]):
+# # $SSE = \sum_{i \in S_1} (y_i - \bar(y)1)^2 + \sum_{i \in S_2} (y_i - \bar(y)2)^2$
+splitting_criterion_honest_with_rcpp <- function(split.var,
+                                       # data.fit, data.honest,
+                                       formula) {
 
-cppFunction(depends = "RcppArmadillo", code = '
-Rcpp::NumericVector splitting_criterion_honest_rcpp(Rcpp::NumericVector split_var_values,
-                                                    arma::mat X,
-                                                    arma::vec response,
-                                                    Rcpp::NumericVector splits) {
-    int n_splits = splits.size();
-    int n = split_var_values.size();
-    Rcpp::NumericVector loss(n_splits);
-
-    for (int ii = 0; ii < n_splits; ++ii) {
-        double split_value = splits[ii];
-
-        // Use Armadillo\'s efficient subsetting mechanism (find function)
-        arma::uvec left_indices = arma::find(arma::vec(split_var_values.begin(), split_var_values.size(), false) < split_value);
-        arma::uvec right_indices = arma::find(arma::vec(split_var_values.begin(), split_var_values.size(), false) >= split_value);
-
-        // Skip if either partition is empty
-        if (left_indices.n_elem == 0 || right_indices.n_elem == 0) {
-            loss[ii] = NA_REAL;
-            continue;
-        }
-
-        // Subset the design matrix and response vector efficiently
-        arma::mat X_left = X.rows(left_indices);
-        arma::vec response_left = response.elem(left_indices);
-        arma::mat X_right = X.rows(right_indices);
-        arma::vec response_right = response.elem(right_indices);
-
-        // Solve the linear equations directly for both partitions
-        arma::vec coef_left = arma::solve(X_left, response_left);
-        arma::vec coef_right = arma::solve(X_right, response_right);
-
-        // Compute residuals using Armadillo\'s efficient vectorized operations
-        arma::vec residuals_left = response_left - X_left * coef_left;
-        arma::vec residuals_right = response_right - X_right * coef_right;
-
-        // Calculate the sum of squared residuals using dot product
-        double rss_left = arma::dot(residuals_left, residuals_left);
-        double rss_right = arma::dot(residuals_right, residuals_right);
-
-        // Store the total loss for this split
-        loss[ii] = rss_left + rss_right;
-    }
-
-    return loss;
-}')
-
-
-# # Define the Rcpp function using RcppArmadillo
-# cppFunction(depends = "RcppArmadillo", '
-# NumericVector splitting_criterion_honest_rcpp(NumericVector split_var_values,
-#                                               arma::mat X,
-#                                               arma::vec response,
-#                                               NumericVector splits) {
-#     int n_splits = splits.size();
-#     int n = split_var_values.size();
-#     NumericVector loss(n_splits);
-#
-#     for (int ii = 0; ii < n_splits; ii++) {
-#         double split_value = splits[ii];
-#
-#         // Vectors to hold left and right indices
-#         std::vector<int> left_indices, right_indices;
-#
-#         // Partition the data based on the split value
-#         for (int i = 0; i < n; i++) {
-#             if (split_var_values[i] < split_value) {
-#                 left_indices.push_back(i);
-#             } else {
-#                 right_indices.push_back(i);
-#             }
-#         }
-#
-#         // If either partition is empty, skip this split
-#         if (left_indices.size() == 0 || right_indices.size() == 0) {
-#             loss[ii] = NA_REAL;
-#             continue;
-#         }
-#
-#         // Extract left and right subsets of X and response
-#         arma::mat X_left(left_indices.size(), X.n_cols);
-#         arma::vec response_left(left_indices.size());
-#         arma::mat X_right(right_indices.size(), X.n_cols);
-#         arma::vec response_right(right_indices.size());
-#
-#         for (size_t i = 0; i < left_indices.size(); i++) {
-#             X_left.row(i) = X.row(left_indices[i]);
-#             response_left[i] = response[left_indices[i]];
-#         }
-#         for (size_t i = 0; i < right_indices.size(); i++) {
-#             X_right.row(i) = X.row(right_indices[i]);
-#             response_right[i] = response[right_indices[i]];
-#         }
-#
-#         // Fit the models using QR decomposition (equivalent to .lm.fit in R)
-#         arma::vec coef_left = arma::solve(X_left, response_left);
-#         arma::vec coef_right = arma::solve(X_right, response_right);
-#
-#         // Calculate residuals
-#         arma::vec residuals_left = response_left - X_left * coef_left;
-#         arma::vec residuals_right = response_right - X_right * coef_right;
-#
-#         // Compute the sum of squared residuals
-#         double rss_left = arma::dot(residuals_left, residuals_left);
-#         double rss_right = arma::dot(residuals_right, residuals_right);
-#
-#         // Store the sum of residuals squared for the split
-#         loss[ii] = rss_left + rss_right;
-#     }
-#
-#     return loss;
-# }')
-
-
-splitting_criterion_honest <- function(split.var, formula) {
+  # browser()
 
   split_var_values <- parent.frame()$this_data_fit[[split.var]]
   splits <- sort(unique(split_var_values))
   splits <- unique(quantile(splits, seq(0.05, 0.95, 0.01), type = 1))
 
-  model_frame <- model.frame(formula, parent.frame()$this_data_fit) # for faster .lm.fit
-  response <- model_frame[, 1]
-  X <- cbind(as.matrix(model_frame[, -1]))
+  model_frame<- model.frame(formula, parent.frame()$this_data_fit) # for faster .lm.fit
+  response <- model_frame[,1]
+  X <- cbind(as.matrix(model_frame[,-1]))
 
-  # Call the Rcpp function
-  loss <- splitting_criterion_honest_rcpp(split_var_values, X, response, splits)
+
+  # df <- parent.frame()$this_data_fit[order(split.var)]
+  #
+  # split_var_values <- df[[split.var]]
+  # splits <- unique(split_var_values)
+  # splits <- unique(quantile(splits, seq(0.05, 0.95, 0.01), type = 1))
+  #
+  # model_frame<- model.frame(formula, df) # for faster .lm.fit
+  # response <- model_frame[,1]
+  # X <- cbind(as.matrix(model_frame[,-1]))
+
+
+  loss <- splitting_criterion_honest_rcpp(split_var_values,
+                                          X,
+                                          response,
+                                          splits)
+
+  # loss <- rep(NA, times = length(splits))
+  # index <- as.numeric(cut(split_var_values, c(-Inf, splits, Inf)))
+  # for (ii in 1:length(splits)) {
+  #
+  #   index_run <- (index <= ii)
+  #   a <- index_run
+  #   b <- !index_run
+  #
+  #   lm_1 <- .lm.fit(X[a, , drop = FALSE], response[a])$residuals
+  #   lm_2 <- .lm.fit(X[b, , drop = FALSE], response[b])$residuals
+  #
+  #   loss[ii] <- sum(lm_1^2) + sum(lm_2^2)
+  #
+  #   # sum((lm_1 - data[split < sp, ]$rv)^2) + sum((lm_2 - data[split >= sp, ]$rv)^2)
+  #   # sum(qlike(pmax(lm_1, min(data$rv)), data[split < sp, ]$rv)) + sum(qlike(pmax(lm_2, min(data$rv)), data[split >= sp, ]$rv))
+  # }
 
   split_at <- splits[which.min(loss)]
 
   split_var_values <- parent.frame()$this_data_honest[[split.var]]
-  model_frame <- model.frame(formula, parent.frame()$this_data_honest) # for faster .lm.fit
-  response <- model_frame[, 1]
-  X <- cbind(as.matrix(model_frame[, -1]))
+  model_frame<- model.frame(formula, parent.frame()$this_data_honest) # for faster .lm.fit
+  response <- model_frame[,1]
+  X <- cbind(as.matrix(model_frame[,-1]))
 
-  lm_1 <- .lm.fit(X[split_var_values < split_at, , drop = FALSE], response[split_var_values < split_at])$coefficients
-  lm_2 <- .lm.fit(X[split_var_values >= split_at, , drop = FALSE], response[split_var_values >= split_at])$coefficients
+  lm_1 <- .lm.fit(X[split_var_values  < split_at, , drop = FALSE], response[split_var_values < split_at])$coefficients
+  lm_2 <- .lm.fit(X[split_var_values  >= split_at, , drop = FALSE], response[split_var_values >= split_at])$coefficients
 
   return(list(sse = min(loss, na.rm = TRUE), split = split_at, lm_1 = lm_1, lm_2 = lm_2))
 }
 
-
+#' @keywords internal
 # # This is the splitting criterion we minimize (SSE [Sum Of Squared Errors]):
 # # $SSE = \sum_{i \in S_1} (y_i - \bar(y)1)^2 + \sum_{i \in S_2} (y_i - \bar(y)2)^2$
-splitting_criterion_honest_old <- function(split.var,
+splitting_criterion_honest <- function(split.var,
                                        # data.fit, data.honest,
                                        formula) {
 
@@ -196,6 +115,8 @@ splitting_criterion_honest_old <- function(split.var,
 
 #' @export
 reg_tree_honest <- function(data, formula, split.vars, minsize, mtry = 1/3, data.predict, cl = NULL) {
+
+  kk <- NULL
 
   # coerce to data.frame
   data <- as.data.frame(data)
@@ -246,7 +167,7 @@ reg_tree_honest <- function(data, formula, split.vars, minsize, mtry = 1/3, data
 
       splitting <- foreach (kk = sample_split_vars) %do% {
         # browser()
-        splitting_criterion_honest(kk,
+        splitting_criterion_honest_with_rcpp(kk,
                                    # data.fit = this_data_fit,
                                    # data.honest = this_data_honest,
                                    formula = formula)
@@ -354,10 +275,8 @@ reg_tree_honest <- function(data, formula, split.vars, minsize, mtry = 1/3, data
     }
   }
 
-  predictions <-
-    data.predict %>%
-    select(date, permno, mean_rv) %>%
-    mutate(forecast = predictions + mean_rv)
+  predictions <- data.predict[, c("date", "permno", "mean_rv")]
+  predictions$forecast = predictions + predictions$mean_rv
 
   # return everything
   return(list(tree = tree_info, split_vars = split.vars, predictions = predictions, formula = formula))
