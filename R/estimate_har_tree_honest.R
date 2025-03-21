@@ -113,7 +113,7 @@ splitting_criterion_honest <- function(split.var,
   return(list(sse = min(loss, na.rm = TRUE), split = split_at, lm_1 = lm_1, lm_2 = lm_2))
 }
 
-#' @export
+#' @keywords internal
 reg_tree_honest <- function(data, formula, split.vars, minsize, mtry = 1/3, data.predict, cl = NULL) {
 
   kk <- NULL

@@ -4,14 +4,14 @@ Date: 2025-03-21
 Title: Estimation of local linear models for volatility forecasting
 Authors@R: person("Onno", "Kleen", role = c("aut", "cre"), email = c("r@onnokleen.de"),
            comment = c(ORCID = "0000-0003-4731-4640"))
-Description: We provide the functionality to estimate the panel heterogeneous autoregressive forest introduced in "A forest full of risk forecasts for managing volatility" by Kleen and Tetereva (2022, <doi:10.2139/ssrn.4161957>). 
+Description: We provide the functionality to estimate the panel heterogeneous autoregressive forest introduced in "A forest full of risk forecasts for managing volatility" (<doi:10.2139/ssrn.4161957>). 
 License: MIT + file LICENSE
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 4.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports:
     purrr,
     foreach,

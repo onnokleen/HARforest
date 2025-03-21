@@ -30,7 +30,7 @@ test_that("trigonometric functions match identities", {
     formula = rv_lead_22 ~ 0 + rv_lag_1 + rv_lag_5 + rv_lag_22,
     split.vars = split_vars,
     minsize = 100,
-    mtry = 4, # (default)
+    mtry = 1, # (default)
     data.predict = df_evaluation
   )
 

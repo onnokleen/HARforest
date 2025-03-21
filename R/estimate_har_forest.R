@@ -1,7 +1,22 @@
 
+#' @title Estimate a HAR tree
+#' @description Estimate a HAR tree using the honest estimation method.
 #' @importFrom purrr map_dbl
 #' @importFrom foreach foreach
 #' @importFrom foreach '%do%'
+#'
+#' @param data A data frame containing the data to be used for the estimation.
+#' @param formula A formula object specifying the model to be fitted (only classical HAR model for now).
+#' @param split.vars A vector of splitting variables.
+#' @param minsize The minimum number of observations in each leaf.
+#' @param mtry The number of variables to consider at each split.
+#' @param data.predict A data frame containing the data to be used for the prediction.
+#'
+#' @return A list containing the following components:
+#' \item{tree}{A data frame containing the tree structure}
+#' \item{split_vars}{A vector of splitting variables}
+#' \item{predictions}{A data frame containing the predictions}
+#' \item{formula}{The formula used for the model}
 
 #' @export
 estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, data.predict) {
@@ -153,9 +168,6 @@ estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, da
       }
     }
   }
-#
-#   predictions <-
-#     mutate(select(data.predict, date, permno, mean_rv), forecast = predictions + mean_rv)
 
   df_predictions <-
     data.predict[, c("date", "permno", "mean_rv")]
@@ -164,29 +176,4 @@ estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, da
   # return everything
   return(list(tree = tree_info, split_vars = split.vars, predictions = df_predictions, formula = formula))
 }
-
-# formula, split.vars, minsize, mtry = 1/3, data.predict
-#
-#
-# df_estimation <-
-#   rv_panel_data %>%
-#   filter(date <= "2004-11-01") %>% # the data is already preaggregated
-#   group_by(permno) %>%             # necessary to limit until November
-#   mutate(mean_rv = mean(rv_lag_1)) # to avoid look-ahead bias
-#
-# df_evaluation <-
-#   rv_panel_data %>%
-#   filter(date >= "2005-01-01") %>%
-#   left_join(select(df_estimation, permno, mean_rv) %>% distinct())
-#
-# estimate_har_tree(
-#   df_estimation ,
-#   formula = rv_lead_22 ~ 0 + rv_lag_1 + rv_lag_5 + rv_lag_22,
-#   split.vars = c("rv_lag_1", "rv_lag_5", "rv_lag_22", "vix_lag"),
-#     minsize = 100,
-#   mtry = 1/3, # (default)
-#   data.predict = df_evaluation
-# )
-#
-
 

@@ -6,7 +6,7 @@
 \alias{HARforest-package}
 \title{HARforest: Estimation of local linear models for volatility forecasting}
 \description{
-We provide the functionality to estimate the panel heterogeneous autoregressive forest introduced in "A forest full of risk forecasts for managing volatility" by Kleen and Tetereva (2022, \doi{10.2139/ssrn.4161957}).
+We provide the functionality to estimate the panel heterogeneous autoregressive forest introduced in "A forest full of risk forecasts for managing volatility" (\doi{10.2139/ssrn.4161957}).
 }
 \seealso{
 Useful links:

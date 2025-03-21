@@ -116,7 +116,7 @@ splitting_criterion_honest_intercept_only <- function(split.var, formula) {
 #   return(data[logical_result, , drop = FALSE])
 # }
 
-#' @export
+#' @keywords internal
 reg_tree_honest_intercept_only <- function(data, formula, split.vars, minsize, mtry = 1/3, data.predict, data.oob, cl = NULL) {
 
   # coerce to data.frame
