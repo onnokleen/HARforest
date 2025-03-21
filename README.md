@@ -5,7 +5,25 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/HARforest)](https://CRAN.R-project.org/package=HARforest)
 <!-- badges: end -->
 
-The goal of the package HARforest is to enable practitioners and researchers alike to employ the HAR forest developed by Kleen, Santos, and Tetereva (2025, [doi:10.2139/ssrn.4161957](https://10.2139/ssrn.4161957)).
+## Overview
+
+HARforest is an R package that implements a the heterogeneous autoregressive (HAR) forest methodology for volatility forecasting. This innovative approach combines the simplicity of HAR models with the power of random forests to capture complex, non-linear relationships in financial time series.
+
+### Key Features
+
+- **Panel Data Support**: Handles multiple time series simultaneously, making it ideal for portfolio analysis
+- **Honest Estimation**: Implements honest estimation to prevent overfitting
+- **Easy Integration**: Seamlessly works with standard R data structures and the tidyverse ecosystem
+
+### Use Cases
+
+- Volatility forecasting for financial assets
+- Risk management and portfolio optimization
+- Market regime detection
+- High-frequency trading applications
+- Academic research in financial econometrics
+
+The methodology is based on the paper "A forest full of risk forecasts for managing volatility" by Kleen, Santos, and Tetereva (2025, [doi:10.2139/ssrn.4161957](https://10.2139/ssrn.4161957)).
 
 ## Installation
 
