@@ -4,9 +4,9 @@
 #' @importFrom foreach '%do%'
 
 #' @export
-estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 2, data.predict) {
+estimate_har_tree <- function(data, formula, split.vars, minsize, mtry = 1/3, data.predict) {
 
-  # mtry <- round(length(split.vars) * mtry) # convert to number of subsampled variables
+  mtry <- round(length(split.vars) * mtry) # convert to number of subsampled variables
 
   # coerce to data.frame
   data <- as.data.frame(data)

@@ -163,7 +163,7 @@ reg_tree_honest <- function(data, formula, split.vars, minsize, mtry = 1/3, data
         this_data_honest <- data_honest
       }
 
-      sample_split_vars <- sample(split.vars, mtry)
+      sample_split_vars <- sample(split.vars, mtry * length(split.vars))
 
       splitting <- foreach (kk = sample_split_vars) %do% {
         # browser()

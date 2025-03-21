@@ -5,7 +5,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/HARforest)](https://CRAN.R-project.org/package=HARforest)
 <!-- badges: end -->
 
-The goal of the package HARforest is to enable practitioners and researchers alike to employ the HAR forest developed by Onno Kleen and Anastasija Tetereva (2022, [doi:10.2139/ssrn.4161957](https://10.2139/ssrn.4161957)).
+The goal of the package HARforest is to enable practitioners and researchers alike to employ the HAR forest developed by Kleen, Santos, and Tetereva (2025, [doi:10.2139/ssrn.4161957](https://10.2139/ssrn.4161957)).
 
 ## Installation
 
@@ -68,7 +68,7 @@ tree_list <- foreach (ii = 1:n_trees) %do% {
 }
 
 # Aggregate predictions of trees
-tree_predictions <-
+har_forest_predictions <-
   tree_list %>%
   lapply(., function(x) x$predictions$forecast) %>%
   do.call(cbind, .) %>%
@@ -76,7 +76,7 @@ tree_predictions <-
 
 # Align them with evaluation sample
 df_evaluation %>%
-  mutate(har_forest = tree_predictions)
+  mutate(har_forest = har_forest_predictions)
   
 ```
 
