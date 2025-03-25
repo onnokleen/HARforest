@@ -1,7 +1,7 @@
 Package: HARforest
 Version: 0.1.0
 Date: 2025-03-21
-Title: Estimation of local linear models for volatility forecasting
+Title: Estimation of Local Linear Models for Volatility Forecasting
 Authors@R: person("Onno", "Kleen", role = c("aut", "cre"), email = c("r@onnokleen.de"),
            comment = c(ORCID = "0000-0003-4731-4640"))
 Description: We provide the functionality to estimate the panel heterogeneous autoregressive forest introduced in "A forest full of risk forecasts for managing volatility" (<doi:10.2139/ssrn.4161957>). 
@@ -15,7 +15,6 @@ RoxygenNote: 7.3.2
 Imports:
     purrr,
     foreach,
-    Rcpp,
     stats,
     data.table,
     dplyr,
@@ -23,8 +22,5 @@ Imports:
 URL: https://github.com/onnokleen/HARforest/
 BugReports: https://github.com/onnokleen/HARforest/issues
 Depends: 
-    R (>= 2.10)
+    R (>= 4.00)
 LazyData: true
-LinkingTo: 
-    Rcpp,
-    RcppArmadillo
